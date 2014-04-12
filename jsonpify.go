@@ -5,7 +5,7 @@ import (
   "github.com/go-martini/martini"
 )
 
-func get_url(url string) bytes.Buffer {
+func GetUrl(url string) bytes.Buffer {
   response, err := http.Get( url )
   var err_buff bytes.Buffer
   if err != nil {
@@ -17,16 +17,16 @@ func get_url(url string) bytes.Buffer {
   return *buf
 }
 
-func get_params(req *http.Request) ([]string, []string) {
+func GetParams(req *http.Request) ([]string, []string) {
   params :=  req.URL.Query()
   return params["url"], params["callback"]
 }
 
-func wrap_content(url, callback string) string {
+func WrapContent(url, callback string) string {
 
   var buffer bytes.Buffer
   var content bytes.Buffer
-  content = get_url(url)
+  content = GetUrl(url)
   buffer.WriteString(callback)
   buffer.WriteString("(")
   buffer.Write(content.Bytes())
@@ -35,16 +35,16 @@ func wrap_content(url, callback string) string {
 
 }
 
-func jsonpify_url_content (res http.ResponseWriter, req *http.Request) string {
+func UrlContentWrappedInCallback (res http.ResponseWriter, req *http.Request) string {
 
-  url, callback := get_params(req)
+  url, callback := GetParams(req)
 
   if callback  == nil {
     return "{\"jsonp_error\": \"missing callback parameter\"}"
   }
 
   if url != nil {
-    return wrap_content(url[0], callback[0])
+    return WrapContent(url[0], callback[0])
   } else {
     // could be changed to show landing page
     return "{\"jsonp_error\": \"missing url parameter\"}"
@@ -53,6 +53,6 @@ func jsonpify_url_content (res http.ResponseWriter, req *http.Request) string {
 
 func main() {
   m := martini.Classic()
-  m.Get("/", jsonpify_url_content)
+  m.Get("/", UrlContentWrappedInCallback)
   m.Run()
 }
