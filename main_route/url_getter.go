@@ -5,7 +5,7 @@ import (
   "net/http"
 )
 
-func GetUrl(url string) bytes.Buffer {
+func getUrl(url string) bytes.Buffer {
   response, err := http.Get( url )
   var err_buff bytes.Buffer
   if err != nil {
@@ -17,16 +17,16 @@ func GetUrl(url string) bytes.Buffer {
   return *buf
 }
 
-func GetParams(req *http.Request) ([]string, []string) {
+func getParams(req *http.Request) ([]string, []string) {
   params :=  req.URL.Query()
   return params["url"], params["callback"]
 }
 
-func WrapContent(url, callback string) string {
+func wrapContent(url, callback string) string {
 
   var buffer bytes.Buffer
   var content bytes.Buffer
-  content = GetUrl(url)
+  content = getUrl(url)
   buffer.WriteString(callback)
   buffer.WriteString("(")
   buffer.Write(content.Bytes())
