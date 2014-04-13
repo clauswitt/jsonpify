@@ -1,6 +1,7 @@
 package main_route
 
 import (
+  "fmt"
   "bytes"
   "net/http"
 )
@@ -17,20 +18,7 @@ func getUrl(url string) bytes.Buffer {
   return *buf
 }
 
-func getParams(req *http.Request) ([]string, []string) {
-  params :=  req.URL.Query()
-  return params["url"], params["callback"]
-}
-
-func wrapContent(url, callback string) string {
-
-  var buffer bytes.Buffer
-  var content bytes.Buffer
-  content = getUrl(url)
-  buffer.WriteString(callback)
-  buffer.WriteString("(")
-  buffer.Write(content.Bytes())
-  buffer.WriteString(")")
-  return buffer.String()
-
+func wrapContentFromUrl(url, wrapper string) string {
+  content := getUrl(url)
+  return fmt.Sprintf(wrapper, content.String())
 }
