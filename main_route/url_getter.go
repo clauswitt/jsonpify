@@ -1,8 +1,8 @@
-package main
+package main_route
+
 import (
   "bytes"
   "net/http"
-  "github.com/go-martini/martini"
 )
 
 func GetUrl(url string) bytes.Buffer {
@@ -33,26 +33,4 @@ func WrapContent(url, callback string) string {
   buffer.WriteString(")")
   return buffer.String()
 
-}
-
-func UrlContentWrappedInCallback (res http.ResponseWriter, req *http.Request) string {
-
-  url, callback := GetParams(req)
-
-  if callback  == nil {
-    return "{\"jsonp_error\": \"missing callback parameter\"}"
-  }
-
-  if url != nil {
-    return WrapContent(url[0], callback[0])
-  } else {
-    // could be changed to show landing page
-    return "{\"jsonp_error\": \"missing url parameter\"}"
-  }
-}
-
-func main() {
-  m := martini.Classic()
-  m.Get("/", UrlContentWrappedInCallback)
-  m.Run()
 }
